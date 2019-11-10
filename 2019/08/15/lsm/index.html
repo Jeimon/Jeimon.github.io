@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/logome.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/bitbug_favicon32.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/bitbug_favicon16.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.4.2',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: 'Copy',
+      copy_success: 'Copied',
+      copy_failure: 'Copy failed'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="Kernel version is v4.18.5. Discretionary Access ControlLinux was initially developed as a clone of the Unix operating system in the early 1990s. As such, it inherits the core Unix security model—a for">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Some Notes about LSM">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;08&#x2F;15&#x2F;lsm&#x2F;index.html">
+<meta property="og:site_name" content="Jinmeng Zhou">
+<meta property="og:description" content="Kernel version is v4.18.5. Discretionary Access ControlLinux was initially developed as a clone of the Unix operating system in the early 1990s. As such, it inherits the core Unix security model—a for">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;08&#x2F;15&#x2F;lsm&#x2F;lsm-1.png">
+<meta property="og:updated_time" content="2019-11-08T14:43:12.827Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;08&#x2F;15&#x2F;lsm&#x2F;lsm-1.png">
+
+<link rel="canonical" href="http://yoursite.com/2019/08/15/lsm/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>Some Notes about LSM | Jinmeng Zhou</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jinmeng Zhou</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="en">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/15/lsm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Jinmeng Zhou">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jinmeng Zhou">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Some Notes about LSM
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-08-15 00:08:38" itemprop="dateCreated datePublished" datetime="2019-08-15T00:08:38+08:00">2019-08-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2019-11-08 22:43:12" itemprop="dateModified" datetime="2019-11-08T22:43:12+08:00">2019-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Kernel version is v4.18.5.</p>
+<h2 id="Discretionary-Access-Control"><a href="#Discretionary-Access-Control" class="headerlink" title="Discretionary Access Control"></a>Discretionary Access Control</h2><p>Linux was initially developed as a clone of the Unix operating system in the early 1990s. As such, it inherits the core Unix security model—a form of Discretionary Access Control (DAC). The security features of the Linux kernel have evolved significantly to meet modern requirements, although Unix DAC remains as the core model. </p>
+<p>Briefly, Unix DAC allows the owner of an object (such as a file) to set the security policy for that object—which is why it’s called a <em>discretionary</em> scheme.  As a user, you can, for example, create a new file in your home directory and decide who else may read or write the file.  This policy is implemented as permission bits attached to the file’s inode, which may be set by the owner of the file.  Permissions for accessing the file, such as <em>read</em> and <em>write,</em> may be set separately for the owner, a specific group, and other (i.e. everyone else). This is a relatively simple form of access control lists (ACLs).</p>
+<p>Programs launched by a user run with all of the rights of that user, whether they need them or not.  There is also a <em>superuser—</em>an all-powerful entity which bypasses Unix DAC policy for the purpose of managing the system.  Running a program as the superuser provides that program with all rights on the system.</p>
+<p>However DAC does not adequately protect against buggy or misconfigured software, for example, which may be exploited by an attacker seeking unauthorized access to resources. There are all kinds of Linux security extensions, we just dicuss the Linux Security Modules and we will take the SELinux as an example to see how it works. ( If you want to see more information about the overview of Linux kernel security features, <a href="https://www.linux.com/learn/overview-linux-kernel-security-features" target="_blank" rel="noopener">clike here</a>.)</p>
+<h2 id="Linux-Security-Modules"><a href="#Linux-Security-Modules" class="headerlink" title="Linux Security Modules"></a><strong>Linux Security</strong> Modules</h2><p>The Linux Security Modules (LSM) API implements hooks at all security-critical points within the kernel.  A user of the framework (an “LSM”) can register with the API and receive callbacks from these hooks.  All security-relevant information is safely passed to the LSM, avoiding race conditions, and the LSM may deny the operation.  This is similar to the Netfilter hook-based API, although applied to the general kernel.</p>
+<p>The LSM API allows different security models to be plugged into the kernel—typically access control frameworks, such as SELinux, AppArmor, Smack and so on. In other words, we have 190 security-critical check points whose implementations are customized by user. For each point, we can plug one or more check implementations (access control frameworks). To ensure compatibility with existing applications, the LSM hooks are placed so that the Unix DAC checks are performed first, and only if they succeed, is LSM code invoked.</p>
+<p>And all security hooks are initialized in security/security.c. We use one simple security-critical check point for example, <a href="https://elixir.bootlin.com/linux/v4.18.5/source/security/security.c#L887" target="_blank" rel="noopener">security_file_ioctl</a> , and figure out how it works:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">security_file_ioctl</span><span class="params">(struct file *file, <span class="keyword">unsigned</span> <span class="keyword">int</span> cmd, <span class="keyword">unsigned</span> <span class="keyword">long</span> arg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> call_int_hook(file_ioctl, <span class="number">0</span>, file, cmd, arg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>It uses <a href="https://elixir.bootlin.com/linux/v4.18.5/source/security/security.c#L214" target="_blank" rel="noopener">call_int_hook</a> macro to initialize. </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> call_int_hook(FUNC, IRC, ...) (&#123;			\</span></span><br><span class="line">	<span class="keyword">int</span> RC = IRC;						\</span><br><span class="line">	<span class="keyword">do</span> &#123;							\</span><br><span class="line">		<span class="class"><span class="keyword">struct</span> <span class="title">security_hook_list</span> *<span class="title">P</span>;</span>			\</span><br><span class="line">								\</span><br><span class="line">		hlist_for_each_entry(P, &amp;security_hook_heads.FUNC, <span class="built_in">list</span>) &#123; \</span><br><span class="line">			RC = P-&gt;hook.FUNC(__VA_ARGS__);		\</span><br><span class="line">			<span class="keyword">if</span> (RC != <span class="number">0</span>)				\</span><br><span class="line">				<span class="keyword">break</span>;				\</span><br><span class="line">		&#125;						\</span><br><span class="line">	&#125; <span class="keyword">while</span> (<span class="number">0</span>);						\</span><br><span class="line">	RC;							\</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>Then <a href="https://elixir.bootlin.com/linux/v4.18.5/source/security/security.c#L214" target="_blank" rel="noopener">call_int_hook</a> use <a href="https://elixir.bootlin.com/linux/v4.18.5/source/include/linux/list.h#L754" target="_blank" rel="noopener">hlist_for_each_entry</a> ( a loop as following) macro to go through all the check implementations at the check point “<a href="https://elixir.bootlin.com/linux/v4.18.5/source/include/linux/lsm_hooks.h#L1777" target="_blank" rel="noopener">security_hook_heads</a>.FUNC”.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * hlist_for_each_entry	- iterate over list of given type</span></span><br><span class="line"><span class="comment"> * @pos:	the type * to use as a loop cursor.</span></span><br><span class="line"><span class="comment"> * @head:	the head for your list.</span></span><br><span class="line"><span class="comment"> * @member:	the name of the hlist_node within the struct.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> hlist_for_each_entry(pos, head, member)				\</span></span><br><span class="line">	<span class="keyword">for</span> (pos = hlist_entry_safe((head)-&gt;first, typeof(*(pos)), member);\</span><br><span class="line">	     pos;							\</span><br><span class="line">	     pos = hlist_entry_safe((pos)-&gt;member.next, typeof(*(pos)), member))</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">struct security_hook_heads &#123;</span><br><span class="line">...</span><br><span class="line">	struct hlist_head file_permission;</span><br><span class="line">	struct hlist_head file_alloc_security;</span><br><span class="line">	struct hlist_head file_free_security;</span><br><span class="line">	struct hlist_head file_ioctl;</span><br><span class="line">	...</span><br><span class="line">&#125; __randomize_layout;</span><br></pre></td></tr></table></figure>
+
+<p>We can find “struct hlist_head file_ioctl” is inside the security_hook_heads which is indexed by “FUNC”.  <a href="https://elixir.bootlin.com/linux/v4.18.5/source/include/linux/lsm_hooks.h#L1777" target="_blank" rel="noopener">security_hook_heads</a> is consisted of several “struct hlist_head” type variable which is a two-way linked-list data structure that links different kinds of check implements needed. It can be understood better by showing the figure as follow:</p>
+<p><img src="/2019/08/15/lsm/lsm-1.png" alt="lsm-1"></p>
+<center><i>Figure 1: assuming firstly do SELinux check, secondly do AppArmor check and then other checks.</i>
+
+
+
+<p>All the different access control frameworks use LSM_HOOK_INIT to add their check implementations, let us see how SELinux do it.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">struct</span> <span class="title">security_hook_list</span> <span class="title">selinux_hooks</span>[] __<span class="title">lsm_ro_after_init</span> = &#123;</span></span><br><span class="line">...</span><br><span class="line">	LSM_HOOK_INIT(file_permission, selinux_file_permission),</span><br><span class="line">	LSM_HOOK_INIT(file_alloc_security, selinux_file_alloc_security),</span><br><span class="line">	LSM_HOOK_INIT(file_ioctl, selinux_file_ioctl),</span><br><span class="line">	...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</center>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Discretionary-Access-Control"><span class="nav-number">1.</span> <span class="nav-text">Discretionary Access Control</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux-Security-Modules"><span class="nav-number">2.</span> <span class="nav-text">Linux Security Modules</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <img class="site-author-image" itemprop="image" alt="Jinmeng Zhou"
+    src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">Jinmeng Zhou</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">1</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jinmeng Zhou</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> v4.0.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">Theme – <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.4.2
+  </div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
