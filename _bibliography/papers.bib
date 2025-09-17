@@ -1,115 +1,105 @@
 ---
 ---
 
-@string{aps = {American Physical Society,}}
-
-@book{einstein1920relativity,
-  title={Relativity: the Special and General Theory},
-  author={Einstein, Albert},
-  year={1920},
-  publisher={Methuen & Co Ltd},
-  html={relativity.html}
+@article{issta25-typecopilot,
+author = {Zhou, Jinmeng and Pan, Ziyue and Shen, Wenbo and Wang, Xingkai and Lu, Kangjie and Qian, Zhiyun},
+title = {Type-Alias Analysis: Enabling LLVM IR with Accurate Types},
+year = {2025},
+issue_date = {July 2025},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {2},
+number = {ISSTA},
+url = {https://doi.org/10.1145/3728974},
+doi = {10.1145/3728974},
+abstract = {LLVM Intermediate Representation (IR) underpins the LLVM compiler infrastructure, offering a strong type system and a static single-assignment (SSA) form that are well-suited for program analysis. However, its single-type design assigns exactly one type to each IR variable, even when the variable may legitimately correspond to multiple types. The recent introduction of opaque pointers exacerbates this limitation: all pointers in the IR are uniformly represented with a generic pointer type (ptr) that erases concrete pointee type information, making many type-based analyses ineffective.    To address the limitations of single-type design, we introduce type-alias analysis, a multiple-type design that maintains type-alias sets for IR variables and infers types across IR instructions. We have developed TypeCopilot, a prototype that recovers concrete pointee types for opaque-pointer-enabled LLVM IR generated from C programs. TypeCopilot achieves 98.57\% accuracy with 94.98\% coverage, allowing existing analysis tools to retain their effectiveness despite the adoption of opaque pointers. To foster further research and security applications, we have open-sourced TypeCopilot, providing the community with a practical foundation for precise, type-aware security analyses on modern LLVM IR.},
+journal = {34th ACM SIGSOFT International Symposium on Software Testing and Analysis (ISSTA)},
+month = jun,
+abbr={ISSTA},
+selected={true},
+pdf={issta25-typecopilot.pdf}
 }
 
-@book{einstein1956investigations,
-  bibtex_show={true},
-  title={Investigations on the Theory of the Brownian Movement},
-  author={Einstein, Albert},
-  year={1956},
-  publisher={Courier Corporation},
-  preview={brownian-motion.gif}
+@misc{arxiv-filesystem,
+      title={Beyond Control: Exploring Novel File System Objects for Data-Only Attacks on Linux Systems}, 
+      author={Jinmeng Zhou and Jiayi Hu and Ziyue Pan and Jiaxun Zhu and Wenbo Shen and Guoren Li and Zhiyun Qian},
+      year={2024},
+      eprint={2401.17618},
+      archivePrefix={arXiv},
+      primaryClass={cs.CR},
+      url={https://arxiv.org/abs/2401.17618},
+      abbr={arXiv},
+      selected={true},
+      pdf={arxiv-filesystem}
 }
 
-@article{einstein1950meaning,
-  abbr={AJP},
-  bibtex_show={true},
-  title={The meaning of relativity},
-  author={Einstein, Albert and Taub, AH},
-  journal={American Journal of Physics},
-  volume={18},
-  number={6},
-  pages={403--404},
-  year={1950},
-  publisher={American Association of Physics Teachers}
-}
-
-@article{PhysRev.47.777,
-  abbr={PhysRev},
-  title={Can Quantum-Mechanical Description of Physical Reality Be Considered Complete?},
-  author={Einstein*†, A. and Podolsky*, B. and Rosen*, N.},
-  abstract={In a complete theory there is an element corresponding to each element of reality. A sufficient condition for the reality of a physical quantity is the possibility of predicting it with certainty, without disturbing the system. In quantum mechanics in the case of two physical quantities described by non-commuting operators, the knowledge of one precludes the knowledge of the other. Then either (1) the description of reality given by the wave function in quantum mechanics is not complete or (2) these two quantities cannot have simultaneous reality. Consideration of the problem of making predictions concerning a system on the basis of measurements made on another system that had previously interacted with it leads to the result that if (1) is false then (2) is also false. One is thus led to conclude that the description of reality as given by a wave function is not complete.},
-  journal={Phys. Rev.},
-  location={New Jersey},
-  volume={47},
-  issue={10},
-  pages={777--780},
-  numpages={0},
-  year={1935},
-  month={May},
-  publisher=aps,
-  doi={10.1103/PhysRev.47.777},
-  url={http://link.aps.org/doi/10.1103/PhysRev.47.777},
-  html={https://journals.aps.org/pr/abstract/10.1103/PhysRev.47.777},
-  pdf={example_pdf.pdf},
-  altmetric={248277},
-  dimensions={true},
-  google_scholar_id={qyhmnyLat1gC},
-  video={https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ},
-  additional_info={. *More Information* can be [found here](https://github.com/alshedivat/al-folio/)},
-  annotation={* Example use of superscripts<br>† Albert Einstein},
+@ARTICLE{tdsc22-pex,
+  author={Zhou, Jinmeng and Zhang, Tong and Shen, Wenbo and Lee, Dongyoon and Jung, Changhee and Azab, Ahmed and Wang, Ruowen and Ning, Peng and Ren, Kui},
+  journal={IEEE Transactions on Dependable and Secure Computing}, 
+  title={Automatic Permission Check Analysis for Linux Kernel}, 
+  year={2023},
+  volume={20},
+  number={3},
+  pages={1849-1866},
+  abstract={Permission checks play an essential role in operating system security by providing access control to privileged functionalities. However, it is challenging for kernel developers to scalably verify the soundness of existing checks due to the large codebase and complexity of the kernel. In fact, Linux kernel contains millions of lines of code with hundreds of permission checks, and even worse, its complexity is fast-growing. This paper presents PeX, a static Permission check error detector for LinuX, which takes as input a kernel source code and reports any missing, inconsistent, and redundant permission checks. PeX uses KIRIN (Kernel InteRface based Indirect call aNalysis), a novel, precise, and scalable indirect call analysis technique. Over the interprocedural control flow graph built by KIRIN, PeX automatically identifies permission checks and infers the mappings between permission checks and privileged functions. For each privileged function, PeX examines all possible paths to the function to check if necessary permission checks are correctly enforced. We evaluated PeX on the latest stable Linux kernel v4.18.5 for three types of permission checks: Discretionary Access Controls (DAC), Capabilities, and Linux Security Modules (LSM). PeX reported 45 new permission check errors, 17 of which have been confirmed by the kernel developers.},
+  doi={10.1109/TDSC.2022.3165368},
   selected={true},
-  inspirehep_id = {3255}
+  pdf={tdsc22-pex.pdf},
+  abbr={TDSC},
 }
 
-@article{einstein1905molekularkinetischen,
-  title={{\"U}ber die von der molekularkinetischen Theorie der W{\"a}rme geforderte Bewegung von in ruhenden Fl{\"u}ssigkeiten suspendierten Teilchen},
-  author={Einstein, A.},
-  journal={Annalen der physik},
-  volume={322},
-  number={8},
-  pages={549--560},
-  year={1905},
-  publisher={Wiley Online Library}
+
+@inproceedings {291257,
+author = {Guoren Li and Hang Zhang and Jinmeng Zhou and Wenbo Shen and Yulei Sui and Zhiyun Qian},
+title = {A Hybrid Alias Analysis and Its Application to Global Variable Protection in the Linux Kernel},
+booktitle = {32nd USENIX Security Symposium (USENIX Security 23)},
+year = {2023},
+isbn = {978-1-939133-37-3},
+address = {Anaheim, CA},
+pages = {4211--4228},
+url = {https://www.usenix.org/conference/usenixsecurity23/presentation/li-guoren},
+publisher = {USENIX Association},
+month = aug,
+  pdf={usenix23-unias.pdf},
+  abbr={USENIX SEC},
 }
 
-@article{einstein1905movement,
-  abbr={Ann. Phys.},
-  title={Un the movement of small particles suspended in statiunary liquids required by the molecular-kinetic theory 0f heat},
-  author={Einstein, A.},
-  journal={Ann. Phys.},
-  volume={17},
-  pages={549--560},
-  year={1905}
+
+@InProceedings{10.1007/978-3-031-70896-1_10,
+author="Liu, Qirui
+and Shen, Wenbo
+and Zhou, Jinmeng
+and Zhang, Zhuoruo
+and Hu, Jiayi
+and Ni, Shukai
+and Lu, Kangjie
+and Chang, Rui",
+editor="Garcia-Alfaro, Joaquin
+and Kozik, Rafa{\l}
+and Chora{\'{s}}, Micha{\l}
+and Katsikas, Sokratis",
+title="Interp-flow Hijacking: Launching Non-control Data Attack via Hijacking eBPF Interpretation Flow",
+booktitle="Computer Security -- ESORICS 2024",
+year="2024",
+publisher="Springer Nature Switzerland",
+address="Cham",
+pages="194--214",
+abstract="eBPF (extended Berkeley Packet Filter) is regarded as a secure alternative to kernel modules for enhancing kernel functionalities. As an emerging kernel subsystem, eBPF should not be exploited by kernel vulnerabilities to bypass established protection. Unfortunately, the exploitability of eBPF has not been fully studied so far.",
+isbn="978-3-031-70896-1",
+  pdf={usenix23-unias.pdf},
+  abbr={ESORICS},
 }
 
-@article{einstein1905electrodynamics,
-  title={On the electrodynamics of moving bodies},
-  author={Einstein, A.},
-  year={1905}
-}
-
-@Article{einstein1905photoelectriceffect,
-  bibtex_show={true},
-  abbr={Ann. Phys.},
-  title="{{\"U}ber einen die Erzeugung und Verwandlung des Lichtes betreffenden heuristischen Gesichtspunkt}",
-  author={Albert Einstein},
-  abstract={This is the abstract text.},
-  journal={Ann. Phys.},
-  volume={322},
-  number={6},
-  pages={132--148},
-  year={1905},
-  doi={10.1002/andp.19053220607},
-  award={Albert Einstein receveid the **Nobel Prize in Physics** 1921 *for his services to Theoretical Physics, and especially for his discovery of the law of the photoelectric effect*},
-  award_name={Nobel Prize}
-}
-
-@book{przibram1967letters,
-  bibtex_show={true},
-  title={Letters on wave mechanics},
-  author={Einstein, Albert and Schrödinger, Erwin and Planck, Max and Lorentz, Hendrik Antoon and Przibram, Karl},
-  year={1967},
-  publisher={Vision},
-  preview={wave-mechanics.gif},
-  abbr={Vision}
+@inproceedings {299597,
+author = {Xingkai Wang and Wenbo Shen and Yujie Bu and Jinmeng Zhou and Yajin Zhou},
+title = {{DMAAUTH}: A Lightweight Pointer Integrity-based Secure Architecture to Defeat {DMA} Attacks},
+booktitle = {33rd USENIX Security Symposium (USENIX Security 24)},
+year = {2024},
+isbn = {978-1-939133-44-1},
+address = {Philadelphia, PA},
+pages = {1081--1098},
+url = {https://www.usenix.org/conference/usenixsecurity24/presentation/wang-xingkai},
+publisher = {USENIX Association},
+month = aug,
+abbr={USENIX SEC}
 }
